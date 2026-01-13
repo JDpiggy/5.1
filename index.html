@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.1 is lots of fun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --success: #4caf50;
+            --bg-grad: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: #ffffff;
+            --text-main: #333;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-grad);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Main Card */
+        .game-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s ease;
+        }
+
+        /* Category Selector */
+        .category-select {
+            margin-bottom: 1.5rem;
+        }
+        
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Problem Display */
+        .problem-box {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 2rem 0;
+            color: var(--text-main);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Input Area */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            font-size: 1.2rem;
+            width: 150px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            outline: none;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: #5a52d5;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Feedback & Score */
+        .feedback {
+            height: 20px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .shake { animation: shake 0.4s ease-in-out; }
+        .pop { animation: pop 0.3s ease-in-out; }
+        
+        .correct-txt { color: var(--success); }
+        .wrong-txt { color: var(--secondary); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>5.1 is lots of fun</h1>
+        <div class="subtitle">by Jaron Dembsky</div>
+    </header>
+
+    <div class="game-container" id="gameCard">
+        <div class="category-select">
+            <label for="category">Category: </label>
+            <select id="category" onchange="newProblem()">
+                <!-- You can add more categories here based on the packet -->
+                <option value="mixed">Mixed Practice</option>
+                <option value="algebra_basic">Solving for X</option>
+                <option value="exponents">Exponents & Powers</option>
+                <option value="geometry">Perimeter & Area</option>
+                <option value="arithmetic">Mental Math</option>
+            </select>
+        </div>
+
+        <div class="problem-box" id="problem">Loading...</div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="input-group">
+            <input type="text" id="userAnswer" placeholder="Answer..." autocomplete="off">
+            <button onclick="checkAnswer()">Submit</button>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <button onclick="newProblem()" style="background: #ccc; font-size: 0.8rem; padding: 8px 15px;">Skip Problem</button>
+        </div>
+
+        <div class="score-board">
+            <span>Score: <span id="score">0</span></span>
+            <span>Streak: <span id="streak">0</span></span>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let currentAnswer = 0;
+        let score = 0;
+        let streak = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            newProblem();
+            
+            // Allow "Enter" key to submit
+            document.getElementById("userAnswer").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    checkAnswer();
+                }
+            });
+        });
+
+        // ----------------------------------------------------
+        // LOGIC: GENERATE PROBLEMS BASED ON "PACKET" CATEGORIES
+        // ----------------------------------------------------
+        function generateProblem(type) {
+            let problemText = "";
+            let answer = 0;
+            let styles = ["algebra_basic", "exponents", "geometry", "arithmetic"];
+
+            // If mixed, pick a random category
+            if (type === "mixed") {
+                type = styles[Math.floor(Math.random() * styles.length)];
+            }
+
+            switch(type) {
+                case "algebra_basic":
+                    // Format: ax + b = c
+                    const a = getRandomInt(2, 9);
+                    const x = getRandomInt(1, 12);
+                    const b = getRandomInt(1, 20);
+                    const c = (a * x) + b;
+                    problemText = `${a}x + ${b} = ${c}`;
+                    answer = x;
+                    break;
+
+                case "exponents":
+                    // Format: x^2 or x^3
+                    const base = getRandomInt(2, 10);
+                    const exp = getRandomInt(2, 3);
+                    problemText = `${base}<sup>${exp}</sup> = ?`;
+                    answer = Math.pow(base, exp);
+                    break;
+
+                case "geometry":
+                    // Format: Area of rectangle
+                    const w = getRandomInt(3, 12);
+                    const l = getRandomInt(3, 12);
+                    // 50% chance of Area, 50% chance of Perimeter
+                    if(Math.random() > 0.5) {
+                        problemText = `Area of rect: ${w} x ${l}`;
+                        answer = w * l;
+                    } else {
+                        problemText = `Perim. of rect: ${w} x ${l}`;
+                        answer = 2 * (w + l);
+                    }
+                    break;
+
+                case "arithmetic":
+                    // Format: (a * b) - c
+                    const n1 = getRandomInt(5, 15);
+                    const n2 = getRandomInt(2, 9);
+                    const n3 = getRandomInt(1, 20);
+                    problemText = `(${n1} × ${n2}) - ${n3}`;
+                    answer = (n1 * n2) - n3;
+                    break;
+            }
+
+            return { text: problemText, ans: answer };
+        }
+
+        // ----------------------------------------------------
+        // GAMEPLAY FUNCTIONS
+        // ----------------------------------------------------
+
+        function newProblem() {
+            const cat = document.getElementById('category').value;
+            const probObj = generateProblem(cat);
+            
+            currentAnswer = probObj.ans;
+            
+            // Update UI
+            const pBox = document.getElementById('problem');
+            pBox.style.opacity = 0;
+            
+            setTimeout(() => {
+                pBox.innerHTML = probObj.text;
+                pBox.style.opacity = 1;
+            }, 200);
+
+            // Reset input
+            document.getElementById('userAnswer').value = '';
+            document.getElementById('feedback').style.opacity = '0';
+            document.getElementById('userAnswer').focus();
+        }
+
+        function checkAnswer() {
+            const userIn = document.getElementById('userAnswer').value.trim();
+            const feedback = document.getElementById('feedback');
+            const card = document.getElementById('gameCard');
+
+            // Simple validation
+            if (userIn === "") return;
+
+            // Check equality (loose equality for string/number match)
+            if (parseFloat(userIn) === parseFloat(currentAnswer)) {
+                // Correct
+                score += 10;
+                streak++;
+                feedback.innerHTML = "Correct! Great Job!";
+                feedback.className = "feedback correct-txt";
+                feedback.style.opacity = '1';
+                
+                // Animation
+                card.classList.remove('shake');
+                card.classList.add('pop');
+                setTimeout(() => card.classList.remove('pop'), 300);
+
+                setTimeout(newProblem, 1000); // Auto load next problem
+            } else {
+                // Incorrect
+                streak = 0;
+                feedback.innerHTML = "Try again!";
+                feedback.className = "feedback wrong-txt";
+                feedback.style.opacity = '1';
+
+                // Animation
+                card.classList.remove('pop');
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 400);
+            }
+
+            updateScoreboard();
+        }
+
+        function updateScoreboard() {
+            document.getElementById('score').innerText = score;
+            document.getElementById('streak').innerText = streak;
+        }
+
+        // Helper
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+    </script>
+</body>
+</html>
