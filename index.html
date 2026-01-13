@@ -3,382 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5.1 is lots of fun</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>5.1 is lots of fun by jaron dembsky</title>
+    <!-- MathJax for rendering beautiful math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Canvas Confetti for celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
-            --primary: #6C63FF;
-            --secondary: #FF6584;
-            --success: #4caf50;
-            --bg-grad: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --card-bg: #ffffff;
-            --text-main: #333;
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #ec4899;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --success: #22c55e;
+            --error: #ef4444;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-grad);
-            margin: 0;
-            height: 100vh;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--background), #1e1b4b);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-
-        /* Header Styling */
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
             margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            overflow-x: hidden;
         }
 
-        .subtitle {
-            font-size: 1rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        /* Main Card */
-        .game-container {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .container {
             width: 90%;
             max-width: 600px;
             text-align: center;
-            position: relative;
-            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transition: transform 0.3s ease;
         }
 
-        /* Category Selector */
-        .category-select {
-            margin-bottom: 1.5rem;
-        }
-        
-        select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            font-family: inherit;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        select:focus {
-            border-color: var(--primary);
-        }
-
-        /* Problem Display */
-        .problem-box {
+        h1 {
             font-size: 2rem;
-            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-pill {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: var(--accent);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .question-box {
+            font-size: 1.8rem;
             margin: 2rem 0;
-            color: var(--text-main);
-            min-height: 60px;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Input Area */
-        .input-group {
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 1.5rem;
+        }
+
+        button.option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: var(--text);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 1.5rem;
         }
 
-        input[type="number"], input[type="text"] {
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #eee;
-            font-size: 1.2rem;
-            width: 150px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        input:focus {
+        button.option-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
-            outline: none;
         }
 
-        button {
+        button.option-btn:active {
+            transform: scale(0.98);
+        }
+
+        button.option-btn.correct {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        button.option-btn.wrong {
+            background: var(--error);
+            border-color: var(--error);
+            animation: shake 0.5s;
+        }
+
+        .next-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 12px 30px;
+            border-radius: 50px;
             font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            font-weight: 600;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            background: #5a52d5;
-        }
-
-        button:active {
-            transform: scale(0.95);
-        }
-
-        /* Feedback & Score */
-        .feedback {
-            height: 20px;
             font-weight: bold;
-            margin-bottom: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
             opacity: 0;
-            transition: opacity 0.3s;
+            pointer-events: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
 
-        .score-board {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: #888;
-            border-top: 1px solid #eee;
-            padding-top: 1rem;
+        .next-btn.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .next-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
         }
 
         /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .shake { animation: shake 0.4s ease-in-out; }
-        .pop { animation: pop 0.3s ease-in-out; }
-        
-        .correct-txt { color: var(--success); }
-        .wrong-txt { color: var(--secondary); }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
 
+        @media (max-width: 500px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>5.1 is lots of fun</h1>
-        <div class="subtitle">by Jaron Dembsky</div>
-    </header>
+<div class="container">
+    <h1>5.1 is lots of fun</h1>
+    <div class="subtitle">by jaron dembsky</div>
 
-    <div class="game-container" id="gameCard">
-        <div class="category-select">
-            <label for="category">Category: </label>
-            <select id="category" onchange="newProblem()">
-                <!-- You can add more categories here based on the packet -->
-                <option value="mixed">Mixed Practice</option>
-                <option value="algebra_basic">Solving for X</option>
-                <option value="exponents">Exponents & Powers</option>
-                <option value="geometry">Perimeter & Area</option>
-                <option value="arithmetic">Mental Math</option>
-            </select>
+    <div class="card">
+        <div class="category-tag" id="category-tag">Topic</div>
+        <div class="score-pill">Streak: <span id="streak">0</span></div>
+
+        <div class="question-box fade-in" id="question-area">
+            Loading...
         </div>
 
-        <div class="problem-box" id="problem">Loading...</div>
-
-        <div class="feedback" id="feedback"></div>
-
-        <div class="input-group">
-            <input type="text" id="userAnswer" placeholder="Answer..." autocomplete="off">
-            <button onclick="checkAnswer()">Submit</button>
-        </div>
-        
-        <div style="margin-top: 10px;">
-            <button onclick="newProblem()" style="background: #ccc; font-size: 0.8rem; padding: 8px 15px;">Skip Problem</button>
+        <div class="options-grid" id="options-area">
+            <!-- Options injected here -->
         </div>
 
-        <div class="score-board">
-            <span>Score: <span id="score">0</span></span>
-            <span>Streak: <span id="streak">0</span></span>
-        </div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Problem ➔</button>
     </div>
+</div>
 
-    <script>
-        // State variables
-        let currentAnswer = 0;
-        let score = 0;
-        let streak = 0;
+<script>
+    /* 
+       LOGIC ENGINE 
+       Based on the PDF provided:
+       1. Reciprocal & Quotient Identities
+       2. Pythagorean Identities
+       3. Co-Function & Even/Odd Identities
+       4. Simplifying Expressions
+       5. Factoring/Expanding
+    */
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            newProblem();
-            
-            // Allow "Enter" key to submit
-            document.getElementById("userAnswer").addEventListener("keypress", function(event) {
-                if (event.key === "Enter") {
-                    checkAnswer();
-                }
-            });
+    let currentStreak = 0;
+    let currentCorrectIndex = 0;
+    let isAnswered = false;
+
+    // Variables used for randomization to make infinite variations
+    const variables = ["x", "\\theta", "t", "\\alpha", "\\beta"];
+
+    const problems = [
+        // --- 1. RECIPROCAL & QUOTIENT ---
+        {
+            type: "Reciprocal Identities",
+            gen: (v) => ({ q: `\\csc(${v})`, a: `\\frac{1}{\\sin(${v})}` }),
+            distractors: (v) => [`\\frac{1}{\\cos(${v})}`, `\\sin(${v})`, `\\sec(${v})`]
+        },
+        {
+            type: "Reciprocal Identities",
+            gen: (v) => ({ q: `\\frac{1}{\\sec(${v})}`, a: `\\cos(${v})` }),
+            distractors: (v) => [`\\sin(${v})`, `\\csc(${v})`, `\\sec(${v})`]
+        },
+        {
+            type: "Quotient Identities",
+            gen: (v) => ({ q: `\\tan(${v})`, a: `\\frac{\\sin(${v})}{\\cos(${v})}` }),
+            distractors: (v) => [`\\frac{\\cos(${v})}{\\sin(${v})}`, `\\frac{1}{\\sin(${v})}`, `\\sin(${v})`]
+        },
+        {
+            type: "Quotient Identities",
+            gen: (v) => ({ q: `\\cot(${v})`, a: `\\frac{\\cos(${v})}{\\sin(${v})}` }),
+            distractors: (v) => [`\\frac{\\sin(${v})}{\\cos(${v})}`, `\\frac{1}{\\cos(${v})}`, `\\cos(${v})`]
+        },
+
+        // --- 2. PYTHAGOREAN IDENTITIES ---
+        {
+            type: "Pythagorean Identities",
+            gen: (v) => ({ q: `\\sin^2(${v}) + \\cos^2(${v})`, a: `1` }),
+            distractors: (v) => [`0`, `2`, `\\tan^2(${v})`]
+        },
+        {
+            type: "Pythagorean Identities",
+            gen: (v) => ({ q: `1 - \\cos^2(${v})`, a: `\\sin^2(${v})` }),
+            distractors: (v) => [`\\cos^2(${v})`, `-\\sin^2(${v})`, `\\csc^2(${v})`]
+        },
+        {
+            type: "Pythagorean Identities",
+            gen: (v) => ({ q: `\\sec^2(${v}) - 1`, a: `\\tan^2(${v})` }),
+            distractors: (v) => [`\\cot^2(${v})`, `1`, `\\csc^2(${v})`]
+        },
+        {
+            type: "Pythagorean Identities",
+            gen: (v) => ({ q: `1 + \\cot^2(${v})`, a: `\\csc^2(${v})` }),
+            distractors: (v) => [`\\sec^2(${v})`, `\\tan^2(${v})`, `1`]
+        },
+
+        // --- 3. EVEN/ODD & CO-FUNCTION ---
+        {
+            type: "Even/Odd Identities",
+            gen: (v) => ({ q: `\\sin(-${v})`, a: `-\\sin(${v})` }),
+            distractors: (v) => [`\\sin(${v})`, `\\cos(${v})`, `-\\cos(${v})`]
+        },
+        {
+            type: "Even/Odd Identities",
+            gen: (v) => ({ q: `\\cos(-${v})`, a: `\\cos(${v})` }),
+            distractors: (v) => [`-\\cos(${v})`, `\\sin(${v})`, `-\\sin(${v})`]
+        },
+        {
+            type: "Co-Function Identities",
+            gen: (v) => ({ q: `\\sin\\left(\\frac{\\pi}{2} - ${v}\\right)`, a: `\\cos(${v})` }),
+            distractors: (v) => [`\\sin(${v})`, `-\\cos(${v})`, `\\csc(${v})`]
+        },
+        {
+            type: "Co-Function Identities",
+            gen: (v) => ({ q: `\\tan\\left(\\frac{\\pi}{2} - ${v}\\right)`, a: `\\cot(${v})` }),
+            distractors: (v) => [`-\\tan(${v})`, `\\tan(${v})`, `\\sec(${v})`]
+        },
+
+        // --- 4. SIMPLIFYING EXPRESSIONS (Based on PDF Pages 3-4) ---
+        {
+            type: "Simplifying Expressions",
+            gen: (v) => ({ q: `\\sin(${v}) \\cdot \\csc(${v})`, a: `1` }),
+            distractors: (v) => [`0`, `\\sin^2(${v})`, `\\cos(${v})`]
+        },
+        {
+            type: "Simplifying Expressions",
+            gen: (v) => ({ q: `\\tan(${v}) \\cdot \\cos(${v})`, a: `\\sin(${v})` }),
+            distractors: (v) => [`\\cos(${v})`, `1`, `\\csc(${v})`]
+        },
+        {
+            type: "Simplifying Expressions",
+            gen: (v) => ({ q: `\\cos(${v}) \\cdot \\sec(${v}) - \\sin^2(${v})`, a: `\\cos^2(${v})` }),
+            distractors: (v) => [`\\sin^2(${v})`, `1`, `0`]
+        },
+        {
+            type: "Simplifying Expressions",
+            gen: (v) => ({ q: `\\frac{\\sin(${v})}{\\tan(${v})}`, a: `\\cos(${v})` }),
+            distractors: (v) => [`\\sin(${v})`, `\\sec(${v})`, `1`]
+        },
+        {
+            type: "Simplifying Expressions",
+            gen: (v) => ({ q: `\\frac{1 - \\cos^2(${v})}{\\sin(${v})}`, a: `\\sin(${v})` }),
+            distractors: (v) => [`\\cos(${v})`, `\\csc(${v})`, `1`]
+        },
+
+        // --- 5. FACTORING & EXPANDING (Based on PDF Page 5) ---
+        {
+            type: "Factoring / Expanding",
+            gen: (v) => ({ q: `(1 - \\sin(${v}))(1 + \\sin(${v}))`, a: `\\cos^2(${v})` }),
+            distractors: (v) => [`\\sin^2(${v})`, `1`, `1 - \\sin(${v})`]
+        },
+        {
+            type: "Factoring / Expanding",
+            gen: (v) => ({ q: `(\\sec(${v}) - 1)(\\sec(${v}) + 1)`, a: `\\tan^2(${v})` }),
+            distractors: (v) => [`\\sec^2(${v})`, `1`, `\\cot^2(${v})`]
+        },
+        {
+            type: "Factoring / Expanding",
+            gen: (v) => ({ q: `\\sin^4(${v}) - \\cos^4(${v})`, a: `\\sin^2(${v}) - \\cos^2(${v})` }),
+            distractors: (v) => [`1`, `(\\sin(${v})-\\cos(${v}))^2`, `0`]
+        }
+    ];
+
+    function getRandomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function generateQuestion() {
+        isAnswered = false;
+        document.getElementById('next-btn').classList.remove('show');
+        const varChoice = getRandomElement(variables);
+        const template = getRandomElement(problems);
+        
+        // Generate Question and Answer
+        const qa = template.gen(varChoice);
+        const dists = template.distractors(varChoice);
+        
+        // Update UI
+        document.getElementById('category-tag').innerText = template.type;
+        document.getElementById('question-area').innerHTML = `\\[ ${qa.q} \\]`;
+        
+        // Prepare Options
+        let options = [
+            { latex: qa.a, isCorrect: true },
+            { latex: dists[0], isCorrect: false },
+            { latex: dists[1], isCorrect: false },
+            { latex: dists[2], isCorrect: false }
+        ];
+
+        shuffleArray(options);
+
+        // Find where the correct answer ended up
+        currentCorrectIndex = options.findIndex(o => o.isCorrect);
+
+        // Render Buttons
+        const optionsArea = document.getElementById('options-area');
+        optionsArea.innerHTML = '';
+        
+        options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `\\( ${opt.latex} \\)`;
+            btn.onclick = () => checkAnswer(btn, opt.isCorrect);
+            optionsArea.appendChild(btn);
         });
 
-        // ----------------------------------------------------
-        // LOGIC: GENERATE PROBLEMS BASED ON "PACKET" CATEGORIES
-        // ----------------------------------------------------
-        function generateProblem(type) {
-            let problemText = "";
-            let answer = 0;
-            let styles = ["algebra_basic", "exponents", "geometry", "arithmetic"];
+        // Re-render MathJax
+        MathJax.typeset();
+        
+        // Reset Animation
+        const qBox = document.getElementById('question-area');
+        qBox.classList.remove('fade-in');
+        void qBox.offsetWidth; // trigger reflow
+        qBox.classList.add('fade-in');
+    }
 
-            // If mixed, pick a random category
-            if (type === "mixed") {
-                type = styles[Math.floor(Math.random() * styles.length)];
-            }
+    function checkAnswer(btn, isCorrect) {
+        if (isAnswered) return; // Prevent multiple guesses per question
+        isAnswered = true;
 
-            switch(type) {
-                case "algebra_basic":
-                    // Format: ax + b = c
-                    const a = getRandomInt(2, 9);
-                    const x = getRandomInt(1, 12);
-                    const b = getRandomInt(1, 20);
-                    const c = (a * x) + b;
-                    problemText = `${a}x + ${b} = ${c}`;
-                    answer = x;
-                    break;
+        const buttons = document.querySelectorAll('.option-btn');
 
-                case "exponents":
-                    // Format: x^2 or x^3
-                    const base = getRandomInt(2, 10);
-                    const exp = getRandomInt(2, 3);
-                    problemText = `${base}<sup>${exp}</sup> = ?`;
-                    answer = Math.pow(base, exp);
-                    break;
-
-                case "geometry":
-                    // Format: Area of rectangle
-                    const w = getRandomInt(3, 12);
-                    const l = getRandomInt(3, 12);
-                    // 50% chance of Area, 50% chance of Perimeter
-                    if(Math.random() > 0.5) {
-                        problemText = `Area of rect: ${w} x ${l}`;
-                        answer = w * l;
-                    } else {
-                        problemText = `Perim. of rect: ${w} x ${l}`;
-                        answer = 2 * (w + l);
-                    }
-                    break;
-
-                case "arithmetic":
-                    // Format: (a * b) - c
-                    const n1 = getRandomInt(5, 15);
-                    const n2 = getRandomInt(2, 9);
-                    const n3 = getRandomInt(1, 20);
-                    problemText = `(${n1} × ${n2}) - ${n3}`;
-                    answer = (n1 * n2) - n3;
-                    break;
-            }
-
-            return { text: problemText, ans: answer };
-        }
-
-        // ----------------------------------------------------
-        // GAMEPLAY FUNCTIONS
-        // ----------------------------------------------------
-
-        function newProblem() {
-            const cat = document.getElementById('category').value;
-            const probObj = generateProblem(cat);
+        if (isCorrect) {
+            btn.classList.add('correct');
+            currentStreak++;
+            triggerConfetti();
+        } else {
+            btn.classList.add('wrong');
+            currentStreak = 0;
+            // Highlight the correct one
+            buttons.forEach(b => {
+                // We need to re-verify which button holds the correct answer visually, 
+                // but since we randomized, let's just loop through logic
+                // A simple hack: we know the correct answer is styled green.
+            });
             
-            currentAnswer = probObj.ans;
+            // Find correct button to show user
+            buttons.forEach(b => {
+                 // Check inner HTML content or data attribute? 
+                 // Easier: pass the index or mark it during generation.
+                 // Let's just re-evaluate logic for simplicity:
+                 // Actually, we can just find the one that didn't get clicked?
+                 // No, let's just mark the correct one green regardless.
+            });
             
-            // Update UI
-            const pBox = document.getElementById('problem');
-            pBox.style.opacity = 0;
-            
-            setTimeout(() => {
-                pBox.innerHTML = probObj.text;
-                pBox.style.opacity = 1;
-            }, 200);
-
-            // Reset input
-            document.getElementById('userAnswer').value = '';
-            document.getElementById('feedback').style.opacity = '0';
-            document.getElementById('userAnswer').focus();
+            // Highlight the correct answer for learning
+            // We need to find the button with isCorrect = true logic.
+            // Since we didn't store it on the element, let's just iterate and match text or modify generation.
+            // IMPROVEMENT: Let's do it in the generation loop.
         }
 
-        function checkAnswer() {
-            const userIn = document.getElementById('userAnswer').value.trim();
-            const feedback = document.getElementById('feedback');
-            const card = document.getElementById('gameCard');
+        // Highlight the correct one always (for feedback)
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(b => {
+           // We need to check if this button corresponds to the correct answer.
+           // Since we randomized, we can't rely on index.
+           // Let's rely on the click handler closure? No.
+           // Let's brute force match the content for now or add a data attribute.
+        });
+        
+        // Simpler approach: Add data-correct to the button in generation
+        // Let's patch the generate function logic briefly here via the DOM:
+        // (See updated generateQuestion logic below implicitly handled if I added data-attr, 
+        // but for now let's just show the next button)
 
-            // Simple validation
-            if (userIn === "") return;
+        document.getElementById('streak').innerText = currentStreak;
+        document.getElementById('next-btn').classList.add('show');
+    }
 
-            // Check equality (loose equality for string/number match)
-            if (parseFloat(userIn) === parseFloat(currentAnswer)) {
-                // Correct
-                score += 10;
-                streak++;
-                feedback.innerHTML = "Correct! Great Job!";
-                feedback.className = "feedback correct-txt";
-                feedback.style.opacity = '1';
-                
-                // Animation
-                card.classList.remove('shake');
-                card.classList.add('pop');
-                setTimeout(() => card.classList.remove('pop'), 300);
+    // Overwrite generateQuestion slightly to add data attribute for easier grading
+    // Rerunning logic to ensure robustness
+    function generateQuestionv2() {
+        isAnswered = false;
+        document.getElementById('next-btn').classList.remove('show');
+        const varChoice = getRandomElement(variables);
+        const template = getRandomElement(problems);
+        
+        const qa = template.gen(varChoice);
+        const dists = template.distractors(varChoice);
+        
+        document.getElementById('category-tag').innerText = template.type;
+        document.getElementById('question-area').innerHTML = `\\[ ${qa.q} \\]`;
+        
+        let options = [
+            { latex: qa.a, isCorrect: true },
+            { latex: dists[0], isCorrect: false },
+            { latex: dists[1], isCorrect: false },
+            { latex: dists[2], isCorrect: false }
+        ];
 
-                setTimeout(newProblem, 1000); // Auto load next problem
-            } else {
-                // Incorrect
-                streak = 0;
-                feedback.innerHTML = "Try again!";
-                feedback.className = "feedback wrong-txt";
-                feedback.style.opacity = '1';
+        shuffleArray(options);
 
-                // Animation
-                card.classList.remove('pop');
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 400);
-            }
+        const optionsArea = document.getElementById('options-area');
+        optionsArea.innerHTML = '';
+        
+        options.forEach((opt) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.dataset.correct = opt.isCorrect; // Store truthiness
+            btn.innerHTML = `\\( ${opt.latex} \\)`;
+            btn.onclick = () => handleAnswer(btn);
+            optionsArea.appendChild(btn);
+        });
 
-            updateScoreboard();
+        MathJax.typeset();
+        
+        const qBox = document.getElementById('question-area');
+        qBox.classList.remove('fade-in');
+        void qBox.offsetWidth; 
+        qBox.classList.add('fade-in');
+    }
+
+    function handleAnswer(btn) {
+        if (isAnswered) return;
+        isAnswered = true;
+        const isCorrect = btn.dataset.correct === "true";
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            currentStreak++;
+            triggerConfetti();
+        } else {
+            btn.classList.add('wrong');
+            currentStreak = 0;
+            // Highlight the actual correct one
+            document.querySelectorAll('.option-btn').forEach(b => {
+                if(b.dataset.correct === "true") b.classList.add('correct');
+            });
         }
+        document.getElementById('streak').innerText = currentStreak;
+        document.getElementById('next-btn').classList.add('show');
+    }
 
-        function updateScoreboard() {
-            document.getElementById('score').innerText = score;
-            document.getElementById('streak').innerText = streak;
-        }
+    function nextQuestion() {
+        generateQuestionv2();
+    }
 
-        // Helper
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+    function triggerConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#6366f1', '#a855f7', '#ec4899']
+        });
+    }
 
-    </script>
+    // Init
+    window.onload = generateQuestionv2;
+
+</script>
 </body>
 </html>
